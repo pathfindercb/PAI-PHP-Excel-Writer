@@ -4,6 +4,8 @@
  * @license MIT License  
  * */
 
+namespace patherfindercb/;
+
 class XLSXWriter
 {
 	//http://www.ecma-international.org/publications/standards/Ecma-376.htm
