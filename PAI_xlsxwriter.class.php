@@ -4,7 +4,7 @@
  * @license MIT License  
  * */
 
-namespace patherfindercb/;
+namespace patherfindercb;
 
 class XLSXWriter
 {
