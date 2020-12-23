@@ -1,0 +1,20 @@
+{
+    "name": "pathfindercb/paiexcel",
+    "description": "creates Excel files",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Chris Barlow",
+            "email": "cbarlow@pathfinderassociatesinc.com"
+        }
+    ],
+ "require": {
+    "php": ">=7.2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "pathfindercb\\": "src/"
+    }
+  }
+}
