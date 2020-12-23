@@ -1,6 +1,7 @@
 <?php
-/*	Updated for column width by Pathfinder Associates, Inc. 4/10/2017
- * @license MIT License
+/*	Updated for column width by Pathfinder Associates, Inc. 4/11/2019
+ *	Updated for landscape and fit and Title property 3/31/18
+ * @license MIT License  
  * */
 
 class XLSXWriter
@@ -10,11 +11,12 @@ class XLSXWriter
 	//------------------------------------------------------------------
 	//http://office.microsoft.com/en-us/excel-help/excel-specifications-and-limits-HP010073849.aspx
 	// added version property so apps can check version
-	const version = "0.41";
+	const version = "0.61";
 	const EXCEL_2007_MAX_ROW=1048576;
 	const EXCEL_2007_MAX_COL=16384;
 	//------------------------------------------------------------------
-	protected $author ='Doc Author';
+	protected $title ='Doc Title';
+	protected $author ='Pathfinder Associates, Inc.';
 	// this is the width for all columns with default of 11.5
 	protected $colwidth = '11.5';
 	// this multidimensional array contains key of sheet name, value as array of colwidths for that sheet
@@ -38,6 +40,8 @@ class XLSXWriter
 		$this->addCellStyle($number_format='GENERAL', $style_string=null);
 		$this->addCellStyle($number_format='GENERAL', $style_string=null);
 	}
+
+	public function setTitle($title='') { $this->title=$title; }
 
 	public function setAuthor($author='') { $this->author=$author; }
 
@@ -71,6 +75,7 @@ class XLSXWriter
 	{
 		$temp_file = $this->tempFilename();
 		self::writeToFile($temp_file);
+		header('Content-Length: ' . filesize($temp_file));
 		readfile($temp_file);
 	}
 
@@ -168,6 +173,7 @@ class XLSXWriter
 	private function buildColXML($sheet_name){
 		// Using array with colwidths for each sheet
 		//   step thru colwidth array for this sheet writing <col with width for each column
+		$c ="";
 		if (array_key_exists($sheet_name, $this->colwidths)) {
 			$col = $this->colwidths[$sheet_name];
 			for ($i=0; $i<count($col);$i++){
@@ -280,7 +286,7 @@ class XLSXWriter
 
 		$sheet->file_writer->write(    '<printOptions headings="false" gridLines="false" gridLinesSet="true" horizontalCentered="false" verticalCentered="false"/>');
 		$sheet->file_writer->write(    '<pageMargins left="0.5" right="0.5" top="1.0" bottom="1.0" header="0.5" footer="0.5"/>');
-		$sheet->file_writer->write(    '<pageSetup blackAndWhite="false" cellComments="none" copies="1" draft="false" firstPageNumber="1" fitToHeight="1" fitToWidth="1" horizontalDpi="300" orientation="portrait" pageOrder="downThenOver" paperSize="1" scale="100" useFirstPageNumber="true" usePrinterDefaults="false" verticalDpi="300"/>');
+		$sheet->file_writer->write(    '<pageSetup blackAndWhite="false" cellComments="none" copies="1" draft="false" firstPageNumber="1" fitToHeight="1000" fitToWidth="1" horizontalDpi="300" pageOrder="downThenOver" paperSize="1" scale="100" useFirstPageNumber="true" usePrinterDefaults="false" verticalDpi="300" orientation="landscape"/>');
 		$sheet->file_writer->write(    '<headerFooter differentFirst="false" differentOddEven="false">');
 		$sheet->file_writer->write(        '<oddHeader>&amp;C&amp;&quot;Times New Roman,Regular&quot;&amp;12&amp;A</oddHeader>');
 		$sheet->file_writer->write(        '<oddFooter>&amp;C&amp;&quot;Times New Roman,Regular&quot;&amp;12Page &amp;P</oddFooter>');
@@ -569,6 +575,7 @@ class XLSXWriter
 		$core_xml.='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'."\n";
 		$core_xml.='<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">';
 		$core_xml.='<dcterms:created xsi:type="dcterms:W3CDTF">'.date("Y-m-d\TH:i:s.00\Z").'</dcterms:created>';//$date_time = '2014-10-25T15:54:37.00Z';
+		$core_xml.='<dc:title>'.self::xmlspecialchars($this->title).'</dc:title>';
 		$core_xml.='<dc:creator>'.self::xmlspecialchars($this->author).'</dc:creator>';
 		$core_xml.='<cp:revision>0</cp:revision>';
 		$core_xml.='</cp:coreProperties>';
